@@ -14,8 +14,6 @@ app.use(express.json());
 
 let args = minimist(process.argv.slice(2));
 let HTTP_PORT = args.port || process.env.PORT || 5000;
-let log = args.log || true;
-let debug = args.debug || false;
 
 // See what is stored in the object produced by minimist
 console.log(args)
@@ -66,8 +64,8 @@ app.use( (req, res, next) => {
     next();
 })
 
-if(debug){
-    app.get('/app/log/access',(req,res,next)=>{
+if(args.debug || args.d){
+    app.get('/app/log/access',(req,res)=>{
         const stmt = db.prepare('SELECT * FROM accesslog').all();
         res.status(200).json(stmt);
     });
@@ -76,11 +74,9 @@ if(debug){
     });
 }
 
-if(log != 'false'){
+if(args.log != 'false'){
     const accesslog = fs.createWriteStream('access.log',{flags:'a'});
     app.use(morgan('combined',{stream:accesslog}))
-}else{
-    console.log("accesslog is not created");
 }
 
 app.get('/app/', (req, res) => {
