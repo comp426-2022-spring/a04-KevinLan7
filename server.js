@@ -62,7 +62,7 @@ app.use( (req, res, next) => {
     }
     const stmt = db.prepare('INSERT INTO userinfo (remoteaddr, remoteuser,time, method, url,protocol, httpversion,status,referer,useragent) VALUES (?, ?,?,?, ?,?,?, ?,?,?)')
     const info = stmt.run(logdata.remoteaddr, logdata.remoteuser,logdata.time,logdata.method,logdata.url,logdata.protocol,logdata.httpversion,logdata.status,logdata.referer,logdata.useragent)
-    next();
+    res.status(200).json(info)
 })
 
 if(debug){
@@ -75,7 +75,7 @@ if(debug){
     });
 }
 
-if(log != false){
+if(log != 'false'){
     const accesslog = fs.createWriteStream('access.log',{flags:'a'});
     app.use(morgan('combined',{stream:accesslog}))
 }else{
