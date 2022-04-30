@@ -67,7 +67,7 @@ app.use( (req, res, next) => {
 })
 
 if(debug){
-    app.get('/app/log/access',(req,res)=>{
+    app.get('/app/log/access',(req,res,next)=>{
         const stmt = db.prepare('SELECT * FROM accesslog').all();
         res.status(200).json(stmt);
     });
@@ -79,6 +79,8 @@ if(debug){
 if(log != 'false'){
     const accesslog = fs.createWriteStream('access.log',{flags:'a'});
     app.use(morgan('combined',{stream:accesslog}))
+}else{
+    console.log("accesslog is not created");
 }
 
 app.get('/app/', (req, res) => {
