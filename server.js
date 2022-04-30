@@ -14,6 +14,8 @@ app.use(express.json());
 
 let args = minimist(process.argv.slice(2));
 let HTTP_PORT = args.port || process.env.PORT || 5000;
+let log = args.log || true;
+let debug = args.debug || false;
 
 // See what is stored in the object produced by minimist
 console.log(args)
@@ -59,13 +61,13 @@ app.use( (req, res, next) => {
         useragent: req.headers['user-agent']
     }
     console.log(logdata);
-    const stmt = db.prepare(`INSERT INTO userinfo (remoteaddr, remoteuser,time, method, url,protocol, httpversion,status,referer,useragent) VALUES (?, ?,?,?, ?,?,?, ?,?,?);`)
+    const stmt = db.prepare(`INSERT INTO accesslog (remoteaddr, remoteuser,time, method, url,protocol, httpversion,status,referer,useragent) VALUES (?, ?,?,?, ?,?,?, ?,?,?);`)
     const info = stmt.run(logdata.remoteaddr, logdata.remoteuser,logdata.time,logdata.method,logdata.url,logdata.protocol,logdata.httpversion,logdata.status,logdata.referer,logdata.useragent)
     next();
 })
 
-if(args.debug || args.d){
-    app.get('/app/log/access',(req,res)=>{
+if(debug){
+    app.get('/app/log/access',(req,res,next)=>{
         const stmt = db.prepare('SELECT * FROM accesslog').all();
         res.status(200).json(stmt);
     });
@@ -74,9 +76,11 @@ if(args.debug || args.d){
     });
 }
 
-if(args.log != 'false'){
+if(log != 'false'){
     const accesslog = fs.createWriteStream('access.log',{flags:'a'});
     app.use(morgan('combined',{stream:accesslog}))
+}else{
+    console.log("accesslog is not created.");
 }
 
 app.get('/app/', (req, res) => {
