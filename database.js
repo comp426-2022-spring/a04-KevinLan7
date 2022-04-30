@@ -18,12 +18,13 @@ if (row === undefined) {
         CREATE TABLE userinfo ( id INTEGER PRIMARY KEY,
             remoteaddr TEXT,
             remoteuser TEXT,
-            time TEXT,
+            time INTEGER,
             method TEXT,
             url TEXT,
             protocol TEXT,
             httpversion TEXT,
-            status TEXT,
+            secure TEXT,
+            status INTEGER,
             referer TEXT,
             useragent TEXT);
     `;
