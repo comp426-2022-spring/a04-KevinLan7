@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 let args = minimist(process.argv.slice(2));
-let HTTP_PORT = args.port || process.env.PORT || 5555;
+let HTTP_PORT = args.port || process.env.PORT || 5000;
 let log = args.log || true;
 let debug = args.debug || false;
 
